@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AniMaster: A Human-Computer Co-creation System for Animation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #333;
+            --secondary-color: #666;
+            --link-color: #007bff;
+            --bg-color: #ffffff;
+            --section-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--primary-color);
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #222;
+        }
+
+        .authors {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .authors a {
+            color: var(--primary-color);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--secondary-color);
+        }
+
+        .institution {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+        }
+
+        /* Buttons */
+        .links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: transform 0.2s, background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+
+        /* Teaser Image/Video */
+        .teaser {
+            width: 100%;
+            margin: 40px 0;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .abstract {
+            text-align: justify;
+            font-size: 1.1rem;
+            color: #444;
+        }
+
+        /* Grid for Results */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .result-item img, .result-item video {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        /* Citation Box */
+        .citation {
+            background-color: var(--section-bg);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border-left: 5px solid #ddd;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .results-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>AniMaster: A Human-Computer Co-creation System for Animation</h1>
+        <div class="authors">
+            <strong></strong><sup>1</sup>, 
+            <a href="#">Collaborator Name</a><sup>1</sup>, 
+            <a href="#">Advisor Name</a><sup>1</sup>
+        </div>
+        <div class="institution">
+            <sup>1</sup>Hangzhou Dianzi University
+        </div>
+
+        <div class="links">
+            <a href="#" class="btn"><i class="fas fa-file-pdf"></i> Paper (Coming Soon)</a>
+            <a href="https://github.com/JiaLe-Xu/AniMaster" class="btn"><i class="fab fa-github"></i> Code</a>
+            <a href="#" class="btn"><i class="fas fa-video"></i> Video Demo</a>
+            <a href="#" class="btn"><i class="fas fa-database"></i> Dataset</a>
+        </div>
+    </header>
+
+    <section>
+        <img src="your-teaser-image.jpg" alt="AniMaster Teaser" class="teaser">
+        <p style="text-align: center; font-style: italic; color: #666;">
+            AniMaster 系统能够通过人机协作，将故事转化为生动的动画表现。
+        </p>
+    </section>
+
+    <section>
+        <h2>Abstract</h2>
+        <div class="abstract">
+            AniMaster 是一款专为动画创作设计的人机协作系统。针对传统动画制作流程复杂、门槛高的问题，我们提出了一种基于 [此处填入你的核心技术，如多模态情感识别或生成式算法] 的方法，允许用户通过简单的交互引导系统生成高质量的动画素材。实验表明，AniMaster 不仅显著提高了创作效率，还增强了作品的情感表达能力力。
+        </div>
+    </section>
+
+    <section>
+        <h2>Methodology</h2>
+        <img src="system-architecture.jpg" alt="System Architecture" style="width:100%; margin-bottom: 20px;">
+        <p>
+            我们的系统由三个核心模块组成：(1) <strong>情感感知模块</strong>，利用多模态输入捕捉创作意图；(2) <strong>协作推理引擎</strong>，实时生成动画候选方案；(3) <strong>交互渲染层</strong>，提供即时反馈。
+        </p>
+    </section>
+
+    <section>
+        <h2>Results</h2>
+        <div class="results-grid">
+            <div class="result-item">
+                <img src="result1.gif" alt="Result 1">
+                <p style="font-size: 0.9rem; text-align: center;">交互式动画生成示例 A</p>
+            </div>
+            <div class="result-item">
+                <img src="result2.gif" alt="Result 2">
+                <p style="font-size: 0.9rem; text-align: center;">交互式动画生成示例 B</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>BibTeX</h2>
+        <div class="citation">
+@article{2026animaster,
+  title={AniMaster},
+  author={},
+  journal={arXiv preprint arXiv:XXXX.XXXXX},
+  year={2026}
+}
+        </div>
+    </section>
+
+    <footer></footer>
+</div>
+
+</body>
+</html>
