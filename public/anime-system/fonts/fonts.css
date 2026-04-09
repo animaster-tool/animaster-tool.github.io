@@ -1,0 +1,7 @@
+@font-face {
+    font-family: 'Sou';  /* 给字体起个名字 */
+    src: url('@/assets/fonts/SEGOESC.TTF') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;  /* 优化字体加载体验 */
+  }

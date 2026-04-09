@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <script>
+      try {
+        const stored = JSON.parse(localStorage.getItem('theme'));
+        if (stored && stored.isDark === false) {
+          document.documentElement.className = 'light';
+        }
+      } catch(e) {}
+    </script>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/anime-system/assets/StoryBoard-Bze1ePm7.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AniMaster</title>
+    <script src="./demo-boot.js"></script>
+    <script type="module" crossorigin src="/anime-system/assets/index-OZNWJsU_.js"></script>
+    <link rel="stylesheet" crossorigin href="/anime-system/assets/index-FMhnGIGw.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
