@@ -68,7 +68,7 @@ onUnmounted(() => {
 <style scoped>
 .snap-timeline {
   position: fixed;
-  left: 24px;
+  left: var(--timeline-left);
   top: 50%;
   transform: translateY(-50%);
   z-index: 900;
@@ -81,7 +81,7 @@ onUnmounted(() => {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--timeline-gap);
   position: relative;
 }
 
@@ -89,9 +89,9 @@ onUnmounted(() => {
 .snap-timeline ul::before {
   content: '';
   position: absolute;
-  left: 5px;
-  top: 6px;
-  bottom: 6px;
+  left: calc(var(--timeline-dot-size) / 2 - 1px);
+  top: calc(var(--timeline-dot-size) * 0.55);
+  bottom: calc(var(--timeline-dot-size) * 0.55);
   width: 1px;
   background: rgba(255, 255, 255, 0.18);
 }
@@ -100,7 +100,7 @@ onUnmounted(() => {
   pointer-events: auto;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--size-10);
   background: transparent;
   border: none;
   padding: 0;
@@ -110,8 +110,8 @@ onUnmounted(() => {
 }
 
 .dot {
-  width: 11px;
-  height: 11px;
+  width: var(--timeline-dot-size);
+  height: var(--timeline-dot-size);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.45);
@@ -122,7 +122,7 @@ onUnmounted(() => {
 }
 
 .label {
-  font-size: 0.78rem;
+  font-size: var(--timeline-label-size);
   letter-spacing: 0.4px;
   opacity: 0;
   transform: translateX(-6px);

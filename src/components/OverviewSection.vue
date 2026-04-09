@@ -1,7 +1,62 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 
 const isVisible = ref(false)
+const overviewBlockRef = ref<HTMLElement | null>(null)
+const LIVE_DEMO_BASE_WIDTH = 1600
+const LIVE_DEMO_BASE_HEIGHT = 900
+
+const liveDemoStyle = ref({
+  width: '100%',
+  height: 'auto',
+})
+const liveDemoFrameStyle = ref({
+  width: `${LIVE_DEMO_BASE_WIDTH}px`,
+  height: `${LIVE_DEMO_BASE_HEIGHT}px`,
+  transform: 'scale(1)',
+})
+
+let resizeObserver: ResizeObserver | null = null
+
+const updateLiveDemoSize = () => {
+  const block = overviewBlockRef.value
+  if (!block) return
+
+  const liveDemo = block.querySelector<HTMLElement>('.live-demo-wrap')
+  if (!liveDemo) return
+
+  const styles = getComputedStyle(block)
+  const gap = Number.parseFloat(styles.rowGap || styles.gap || '0') || 0
+  const textItems = Array.from(block.children).filter((child) => child !== liveDemo)
+  const textHeight = textItems.reduce((sum, child) => sum + (child as HTMLElement).offsetHeight, 0)
+  const availableWidth = block.clientWidth
+  const availableHeight = Math.max(
+    block.clientHeight - textHeight - gap * Math.max(block.children.length - 1, 0),
+    0
+  )
+
+  if (availableWidth <= 0 || availableHeight <= 0) return
+
+  let width = availableWidth
+  let height = (width * 9) / 16
+
+  if (height > availableHeight) {
+    height = availableHeight
+    width = (height * 16) / 9
+  }
+
+  const scale = Math.min(width / LIVE_DEMO_BASE_WIDTH, height / LIVE_DEMO_BASE_HEIGHT)
+
+  liveDemoStyle.value = {
+    width: `${Math.round(width)}px`,
+    height: `${Math.round(height)}px`,
+  }
+  liveDemoFrameStyle.value = {
+    width: `${LIVE_DEMO_BASE_WIDTH}px`,
+    height: `${LIVE_DEMO_BASE_HEIGHT}px`,
+    transform: `scale(${scale})`,
+  }
+}
 
 onMounted(() => {
   const observer = new IntersectionObserver(
@@ -17,6 +72,16 @@ onMounted(() => {
   )
   const el = document.getElementById('overview')
   if (el) observer.observe(el)
+
+  nextTick(() => {
+    updateLiveDemoSize()
+    resizeObserver = new ResizeObserver(() => updateLiveDemoSize())
+    if (overviewBlockRef.value) resizeObserver.observe(overviewBlockRef.value)
+  })
+})
+
+onUnmounted(() => {
+  if (resizeObserver) resizeObserver.disconnect()
 })
 </script>
 
@@ -24,7 +89,7 @@ onMounted(() => {
   <section id="overview" class="overview-section">
     <div class="spacer"></div>
 
-    <div :class="['overview-block', { visible: isVisible }]">
+    <div ref="overviewBlockRef" :class="['overview-block', { visible: isVisible }]">
       <h2>What is AniMaster?</h2>
       <p class="tldr">
         TL;DR: AniMaster is an LLM-powered authoring tool that helps everyday creators
@@ -35,7 +100,7 @@ onMounted(() => {
 
       <!-- Live interactive demo: the real AniMaster frontend, prebaked with
            the 小红帽 workspace, running purely in the browser (no backend). -->
-      <div class="live-demo-wrap">
+      <div class="live-demo-wrap" :style="liveDemoStyle">
         <div class="live-demo-header">
           <span class="dot" /><span class="dot" /><span class="dot" />
           <span class="live-demo-title">AniMaster · Live Demo</span>
@@ -43,6 +108,7 @@ onMounted(() => {
         </div>
         <iframe
           class="live-demo-frame"
+          :style="liveDemoFrameStyle"
           src="./anime-system/index.html"
           title="AniMaster interactive demo"
           loading="lazy"
@@ -131,20 +197,31 @@ onMounted(() => {
 
 <style scoped>
 .overview-section {
-  padding: 0 40px 80px;
-  max-width: 1600px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--overview-top-space) var(--page-gutter) calc(56px * var(--page-scale));
+  max-width: var(--section-max-width);
   margin: 0 auto;
 }
 
 .spacer {
-  height: 120px;
+  display: none;
 }
 
 .overview-block {
-  margin-bottom: 64px;
+  margin-bottom: 0;
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.overview-section > .overview-block:first-of-type {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: var(--overview-gap);
 }
 
 .overview-block.visible {
@@ -161,18 +238,19 @@ onMounted(() => {
 }
 
 h2 {
-  font-size: 1.8rem;
+  font-size: var(--section-title-size);
   font-weight: 700;
   color: #fff;
-  margin-bottom: 16px;
+  margin-bottom: var(--size-16);
 }
 
 .tldr {
   color: rgba(255, 255, 255, 0.75);
-  font-size: 1.05rem;
-  line-height: 1.7;
-  margin-bottom: 32px;
-  max-width: 850px;
+  font-size: var(--body-size);
+  line-height: 1.75;
+  margin-bottom: 0;
+  width: 100%;
+  max-width: none;
 }
 
 .description {
@@ -184,12 +262,24 @@ h2 {
 
 /* ===== Live Interactive Demo (iframed real frontend) ===== */
 .live-demo-wrap {
+  position: relative;
   width: 100%;
-  background: #0d0d0d;
+  max-width: 100%;
+  flex: 0 0 auto;
+  aspect-ratio: 16 / 9;
+  align-self: center;
+  background: rgba(13, 13, 13, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
+  border-radius: var(--card-radius);
   overflow: hidden;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.live-demo-header,
+.live-demo-hint,
+.overview-block.delay,
+.overview-block.delay-2 {
+  display: none !important;
 }
 
 .live-demo-header {
@@ -227,12 +317,14 @@ h2 {
 }
 
 .live-demo-frame {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  height: auto;
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 1600px;
+  height: 900px;
   border: none;
   display: block;
   background: #0a0a0a;
+  transform-origin: top left;
 }
 
 .live-demo-hint {
@@ -359,17 +451,10 @@ h2 {
 
 @media (max-width: 768px) {
   .overview-section {
-    padding: 0 24px 60px;
+    padding: calc(var(--header-height) + 24px) 24px 32px;
   }
-  h2 {
-    font-size: 1.5rem;
-  }
-  .challenge-cards,
-  .feature-cards {
-    grid-template-columns: 1fr;
-  }
-  .about-actions {
-    flex-wrap: wrap;
+  .overview-section > .overview-block:first-of-type {
+    gap: 18px;
   }
 }
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import HeaderNav from './components/HeaderNav.vue'
 import HeroSection from './components/HeroSection.vue'
 import OverviewSection from './components/OverviewSection.vue'
@@ -6,17 +7,83 @@ import DemosSection from './components/DemosSection.vue'
 import MethodSection from './components/MethodSection.vue'
 import FooterSection from './components/FooterSection.vue'
 import SnapTimeline from './components/SnapTimeline.vue'
-  
+
+const DESIGN_WIDTH = 1600
+const DESIGN_HEIGHT = 900
+
+const pageScale = ref(1)
+
+const updatePageScale = () => {
+  pageScale.value = Math.min(window.innerWidth / DESIGN_WIDTH, window.innerHeight / DESIGN_HEIGHT)
+}
+
+const appScaleStyle = computed<Record<string, string>>(() => {
+  const s = pageScale.value
+
+  return {
+    '--page-scale': `${s}`,
+    '--header-height': `${64 * s}px`,
+    '--page-gutter': `${40 * s}px`,
+    '--section-padding-y': `${80 * s}px`,
+    '--overview-top-space': `${120 * s}px`,
+    '--section-max-width': `min(${1480 * s}px, calc(100vw - (var(--page-gutter) * 2)))`,
+    '--content-max-width': `min(${1100 * s}px, calc(100vw - (var(--page-gutter) * 2)))`,
+    '--hero-title-size': `${40 * s}px`,
+    '--section-title-size': `${30 * s}px`,
+    '--section-label-size': `${26 * s}px`,
+    '--body-size': `${17 * s}px`,
+    '--body-size-sm': `${15 * s}px`,
+    '--meta-size': `${13 * s}px`,
+    '--nav-size': `${14 * s}px`,
+    '--card-radius': `${18 * s}px`,
+    '--size-8': `${8 * s}px`,
+    '--size-10': `${10 * s}px`,
+    '--size-12': `${12 * s}px`,
+    '--size-14': `${14 * s}px`,
+    '--size-16': `${16 * s}px`,
+    '--size-18': `${18 * s}px`,
+    '--size-20': `${20 * s}px`,
+    '--size-22': `${22 * s}px`,
+    '--size-24': `${24 * s}px`,
+    '--size-28': `${28 * s}px`,
+    '--size-32': `${32 * s}px`,
+    '--size-34': `${34 * s}px`,
+    '--size-36': `${36 * s}px`,
+    '--size-40': `${40 * s}px`,
+    '--size-42': `${42 * s}px`,
+    '--size-56': `${56 * s}px`,
+    '--hero-content-max-width': `${1400 * s}px`,
+    '--hero-title-max-width': `${700 * s}px`,
+    '--overview-gap': `${28 * s}px`,
+    '--section-gap-lg': `${32 * s}px`,
+    '--section-gap-md': `${24 * s}px`,
+    '--section-gap-sm': `${16 * s}px`,
+    '--timeline-left': `${24 * s}px`,
+    '--timeline-gap': `${18 * s}px`,
+    '--timeline-dot-size': `${11 * s}px`,
+    '--timeline-label-size': `${12.5 * s}px`,
+  }
+})
+
 const scrollTo = (id: string) => {
   const el = document.getElementById(id)
   if (el) {
     el.scrollIntoView({ behavior: 'smooth' })
   }
 }
+
+onMounted(() => {
+  updatePageScale()
+  window.addEventListener('resize', updatePageScale)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updatePageScale)
+})
 </script>
 
 <template>
-  <div class="app-container">
+  <div class="app-container" :style="appScaleStyle">
     <!-- Global video background: fixed-position, non-interactive, covers every
          section. Blur + dark overlay live in CSS. -->
     <video

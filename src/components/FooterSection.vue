@@ -19,14 +19,14 @@
 <style scoped>
 .site-footer {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 60px 60px 30px;
+  padding: calc(60px * var(--page-scale)) var(--page-gutter) calc(30px * var(--page-scale));
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .footer-container {
-  max-width: 1100px;
+  max-width: var(--content-max-width);
   width: 100%;
   margin: 0 auto;
 }
@@ -39,7 +39,7 @@
 
 .footer-bottom p {
   color: rgba(255, 255, 255, 0.3);
-  font-size: 0.8rem;
+  font-size: var(--meta-size);
 }
 
 .social-icons {
@@ -50,7 +50,7 @@
 .social-icons a {
   color: rgba(255, 255, 255, 0.4);
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: var(--body-size-sm);
   transition: color 0.3s;
 }
 

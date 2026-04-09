@@ -38,8 +38,8 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 40px;
-  height: 64px;
+  padding: 0 var(--page-gutter);
+  height: var(--header-height);
   background: transparent;
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
@@ -58,20 +58,20 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 }
 
 .logo-img {
-  height: 32px;
+  height: var(--size-34);
   width: auto;
   display: block;
 }
 
 .main-nav {
   display: flex;
-  gap: 28px;
+  gap: var(--size-28);
 }
 
 .main-nav a {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: var(--nav-size);
   font-weight: 500;
   transition: color 0.3s;
 }
@@ -91,9 +91,6 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   }
   .main-nav {
     gap: 16px;
-  }
-  .main-nav a {
-    font-size: 0.8rem;
   }
 }
 </style>

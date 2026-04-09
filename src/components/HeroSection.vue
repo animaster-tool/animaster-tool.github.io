@@ -60,8 +60,8 @@ onMounted(() => {
   position: relative;
   z-index: 2;
   text-align: center;
-  padding: 0 20px;
-  max-width: 1400px;
+  padding: 0 var(--page-gutter);
+  max-width: var(--hero-content-max-width);
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
@@ -74,35 +74,31 @@ onMounted(() => {
 
 .uist-badge {
   display: block;
-  height: 56px;
+  height: calc(56px * var(--page-scale));
   width: auto;
-  margin: 0 auto 20px;
+  margin: 0 auto var(--size-20);
   filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5));
 }
 
 .animaster-logo {
   display: block;
-  height: 140px;
+  height: calc(140px * var(--page-scale));
   width: auto;
   max-width: 90vw;
-  margin: 0 auto 20px;
+  margin: 0 auto var(--size-20);
   filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.65))
           drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
 }
 
 .hero-text-content h2 {
-  font-size: 2.1rem;
+  font-size: var(--hero-title-size);
   font-weight: 600;
   line-height: 1.35;
   max-width: 1300px;
-  text-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.9),
-    0 2px 18px rgba(0, 0, 0, 0.7),
-    0 4px 32px rgba(0, 0, 0, 0.5);
   color: rgba(255, 255, 255, 0.92);
-  margin-bottom: 32px;
+  margin-bottom: var(--size-32);
   line-height: 1.6;
-  max-width: 700px;
+  max-width: min(var(--hero-title-max-width), 78vw);
   margin-left: auto;
   margin-right: auto;
 }
@@ -151,11 +147,8 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .animaster-logo {
-    height: 86px;
-  }
-  .hero-text-content h2 {
-    font-size: 1.25rem;
+  .hero-content {
+    padding: 0 24px;
   }
 }
 </style>

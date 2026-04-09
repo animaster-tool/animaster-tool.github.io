@@ -1,7 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
-const steps = [
+type DemoStep = {
+  id: string
+  label: string
+  title: string
+  description: string
+  placeholder: string
+}
+
+const steps: DemoStep[] = [
   {
     id: 'import',
     label: '1. Import Story',
@@ -45,6 +53,7 @@ const steps = [
 ]
 
 const activeStep = ref(0)
+const currentStep = computed<DemoStep>(() => steps[activeStep.value] ?? steps[0]!)
 </script>
 
 <template>
@@ -70,8 +79,8 @@ const activeStep = ref(0)
     <!-- Step content -->
     <div class="step-content" :key="activeStep">
       <div class="step-text">
-        <h3>{{ steps[activeStep].title }}</h3>
-        <p>{{ steps[activeStep].description }}</p>
+        <h3>{{ currentStep.title }}</h3>
+        <p>{{ currentStep.description }}</p>
 
         <div class="step-actions">
           <button
@@ -93,7 +102,7 @@ const activeStep = ref(0)
 
       <div class="step-visual">
         <div class="visual-placeholder">
-          <span>{{ steps[activeStep].placeholder }}</span>
+          <span>{{ currentStep.placeholder }}</span>
         </div>
       </div>
     </div>
@@ -102,28 +111,28 @@ const activeStep = ref(0)
 
 <style scoped>
 .demos-section {
-  padding: 80px 60px;
-  max-width: 1100px;
+  padding: var(--section-padding-y) var(--page-gutter);
+  max-width: var(--content-max-width);
   margin: 0 auto;
 }
 
 .section-label {
-  font-size: 1.6rem;
+  font-size: var(--section-label-size);
   color: #fff;
-  margin-bottom: 8px;
+  margin-bottom: var(--size-12);
 }
 
 .section-subtitle {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 0.95rem;
-  margin-bottom: 32px;
+  font-size: var(--body-size-sm);
+  margin-bottom: var(--size-32);
 }
 
 /* Step Navigation */
 .step-nav {
   display: flex;
   gap: 0;
-  margin-bottom: 36px;
+  margin-bottom: var(--size-36);
   position: relative;
   overflow-x: auto;
 }
@@ -145,8 +154,8 @@ const activeStep = ref(0)
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.45);
-  padding: 12px 20px;
-  font-size: 0.85rem;
+  padding: var(--size-12) var(--size-20);
+  font-size: var(--meta-size);
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.3s;
@@ -182,7 +191,7 @@ const activeStep = ref(0)
 .step-content {
   display: grid;
   grid-template-columns: 1fr 1.3fr;
-  gap: 32px;
+  gap: var(--section-gap-lg);
   animation: fadeIn 0.4s ease;
 }
 
@@ -198,17 +207,17 @@ const activeStep = ref(0)
 }
 
 .step-text h3 {
-  font-size: 1.3rem;
+  font-size: calc(22px * var(--page-scale));
   font-weight: 600;
   color: #fff;
-  margin-bottom: 16px;
+  margin-bottom: var(--size-16);
 }
 
 .step-text p {
   color: rgba(255, 255, 255, 0.65);
-  font-size: 0.92rem;
+  font-size: var(--body-size-sm);
   line-height: 1.75;
-  margin-bottom: 24px;
+  margin-bottom: var(--size-24);
 }
 
 .step-actions {
@@ -217,12 +226,12 @@ const activeStep = ref(0)
 }
 
 .nav-btn {
-  padding: 8px 20px;
+  padding: var(--size-10) var(--size-20);
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 0.7);
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: var(--meta-size);
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -244,32 +253,31 @@ const activeStep = ref(0)
 
 .visual-placeholder {
   width: 100%;
-  height: 360px;
+  min-height: calc(360px * var(--page-scale));
   background: rgba(255, 255, 255, 0.03);
   border: 2px dashed rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 20px;
+  padding: var(--size-24);
 }
 
 .visual-placeholder span {
   color: rgba(255, 255, 255, 0.2);
-  font-size: 0.9rem;
+  font-size: var(--body-size-sm);
 }
 
 @media (max-width: 768px) {
   .demos-section {
-    padding: 60px 24px;
+    padding: calc(56px * var(--page-scale)) 24px;
   }
   .step-content {
     grid-template-columns: 1fr;
   }
   .step-btn {
     padding: 10px 14px;
-    font-size: 0.8rem;
   }
 }
 </style>

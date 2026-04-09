@@ -223,21 +223,21 @@ const activeTab = ref(0)
 
 <style scoped>
 .method-section {
-  padding: 80px 60px;
-  max-width: 1100px;
+  padding: var(--section-padding-y) var(--page-gutter);
+  max-width: var(--content-max-width);
   margin: 0 auto;
 }
 
 .section-label {
-  font-size: 1.6rem;
+  font-size: var(--section-label-size);
   color: #fff;
-  margin-bottom: 20px;
+  margin-bottom: var(--size-24);
 }
 
 .tabs-nav {
   display: flex;
   gap: 0;
-  margin-bottom: 32px;
+  margin-bottom: var(--size-32);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -245,8 +245,8 @@ const activeTab = ref(0)
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.5);
-  padding: 10px 24px;
-  font-size: 0.9rem;
+  padding: var(--size-10) var(--size-24);
+  font-size: var(--meta-size);
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.3s;
@@ -271,41 +271,41 @@ const activeTab = ref(0)
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: var(--section-title-size);
   font-weight: 700;
   color: #fff;
-  margin-bottom: 12px;
+  margin-bottom: var(--size-14);
 }
 
 .content-description {
   color: rgba(255, 255, 255, 0.65);
-  font-size: 0.95rem;
+  font-size: var(--body-size-sm);
   line-height: 1.7;
-  margin-bottom: 28px;
+  margin-bottom: var(--size-28);
   max-width: 850px;
 }
 
 .figure-placeholder {
   width: 100%;
-  height: 300px;
+  min-height: calc(300px * var(--page-scale));
   background: rgba(255, 255, 255, 0.03);
   border: 2px dashed rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 32px;
+  margin-bottom: var(--size-32);
   text-align: center;
-  padding: 20px;
+  padding: var(--size-24);
 }
 
 .figure-placeholder.large {
-  height: 400px;
+  min-height: calc(400px * var(--page-scale));
 }
 
 .figure-placeholder span {
   color: rgba(255, 255, 255, 0.2);
-  font-size: 0.9rem;
+  font-size: var(--body-size-sm);
 }
 
 /* Layer Cards (Framework) */
@@ -318,8 +318,8 @@ h2 {
 .layer-card {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: var(--card-radius);
+  padding: var(--size-22);
   border-top: 3px solid rgba(255, 255, 255, 0.15);
 }
 
@@ -328,21 +328,21 @@ h2 {
 .layer-card.video { border-top-color: rgba(129, 199, 132, 0.6); }
 
 .layer-card h3 {
-  font-size: 1.05rem;
+  font-size: calc(17px * var(--page-scale));
   color: #fff;
   margin-bottom: 4px;
 }
 
 .layer-question {
   color: rgba(255, 255, 255, 0.4);
-  font-size: 0.8rem;
+  font-size: var(--meta-size);
   font-style: italic;
   margin-bottom: 10px;
 }
 
 .layer-card p:last-child {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.85rem;
+  font-size: var(--body-size-sm);
   line-height: 1.6;
 }
 
@@ -357,13 +357,13 @@ h2 {
   flex: 1;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: var(--card-radius);
+  padding: var(--size-24);
 }
 
 .stage-label {
   display: inline-block;
-  font-size: 0.7rem;
+  font-size: var(--meta-size);
   font-weight: 700;
   color: rgba(100, 181, 246, 0.9);
   background: rgba(100, 181, 246, 0.1);
@@ -375,14 +375,14 @@ h2 {
 }
 
 .stage-card h3 {
-  font-size: 1.1rem;
+  font-size: calc(18px * var(--page-scale));
   color: #fff;
   margin-bottom: 10px;
 }
 
 .stage-card > p {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.88rem;
+  font-size: var(--body-size-sm);
   line-height: 1.65;
   margin-bottom: 16px;
 }
@@ -402,7 +402,7 @@ h2 {
 }
 
 .beat {
-  font-size: 0.7rem;
+  font-size: var(--meta-size);
   padding: 3px 10px;
   border-radius: 12px;
   font-weight: 600;
@@ -424,7 +424,7 @@ h2 {
 }
 
 .params-grid span {
-  font-size: 0.7rem;
+  font-size: var(--meta-size);
   padding: 3px 10px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.06);
@@ -442,33 +442,33 @@ h2 {
 .if-card {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 18px;
+  border-radius: calc(var(--card-radius) - 4px);
+  padding: var(--size-20);
 }
 
 .if-label {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: calc(22px * var(--page-scale));
+  height: calc(22px * var(--page-scale));
   border-radius: 50%;
   background: rgba(100, 181, 246, 0.15);
   color: #64b5f6;
-  font-size: 0.7rem;
+  font-size: var(--meta-size);
   font-weight: 700;
   margin-bottom: 8px;
 }
 
 .if-card h4 {
-  font-size: 0.9rem;
+  font-size: calc(15.5px * var(--page-scale));
   color: #fff;
   margin-bottom: 4px;
 }
 
 .if-card p {
   color: rgba(255, 255, 255, 0.55);
-  font-size: 0.8rem;
+  font-size: var(--body-size-sm);
   line-height: 1.55;
 }
 
@@ -483,19 +483,19 @@ h2 {
 .eval-card {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 22px;
+  border-radius: var(--card-radius);
+  padding: var(--size-22);
 }
 
 .eval-card h3 {
-  font-size: 1rem;
+  font-size: calc(17px * var(--page-scale));
   color: #fff;
   margin-bottom: 10px;
 }
 
 .eval-card > p {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.85rem;
+  font-size: var(--body-size-sm);
   line-height: 1.6;
   margin-bottom: 14px;
 }
@@ -505,7 +505,7 @@ h2 {
   border-left: 3px solid rgba(100, 181, 246, 0.4);
   padding: 10px 14px;
   color: rgba(255, 255, 255, 0.55);
-  font-size: 0.8rem;
+  font-size: var(--body-size-sm);
   font-style: italic;
   line-height: 1.55;
   border-radius: 0 6px 6px 0;
@@ -513,7 +513,7 @@ h2 {
 
 @media (max-width: 768px) {
   .method-section {
-    padding: 60px 24px;
+    padding: calc(56px * var(--page-scale)) 24px;
   }
   .layer-cards,
   .interface-features,
@@ -529,7 +529,6 @@ h2 {
   }
   .tab-btn {
     padding: 8px 14px;
-    font-size: 0.8rem;
   }
 }
 </style>
