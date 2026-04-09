@@ -6,7 +6,7 @@ import DemosSection from './components/DemosSection.vue'
 import MethodSection from './components/MethodSection.vue'
 import FooterSection from './components/FooterSection.vue'
 import SnapTimeline from './components/SnapTimeline.vue'
-
+ 
 const scrollTo = (id: string) => {
   const el = document.getElementById(id)
   if (el) {
