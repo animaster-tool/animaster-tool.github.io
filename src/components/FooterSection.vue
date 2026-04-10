@@ -18,17 +18,18 @@
 
 <style scoped>
 .site-footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: calc(60px * var(--page-scale)) var(--page-gutter) calc(30px * var(--page-scale));
+  padding: calc(24px * var(--page-scale)) var(--page-gutter) calc(18px * var(--page-scale));
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .footer-container {
-  max-width: var(--content-max-width);
+  max-width: var(--section-max-width);
   width: 100%;
   margin: 0 auto;
+  padding-top: calc(18px * var(--page-scale));
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .footer-bottom {
@@ -60,11 +61,11 @@
 
 @media (max-width: 768px) {
   .site-footer {
-    padding: 40px 24px 20px;
+    padding: 18px 24px 14px;
   }
   .footer-bottom {
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     text-align: center;
   }
 }

@@ -6,44 +6,61 @@ const steps = [
   { id: 'overview', label: 'Overview' },
   { id: 'demos', label: 'Paper Summary' },
   { id: 'method', label: 'Gallery' },
-  { id: 'footer', label: 'Footer' },
 ]
 
 const activeId = ref('hero')
-let observer: IntersectionObserver | null = null
+let scroller: HTMLElement | null = null
+let trackedSections: HTMLElement[] = []
+let frameId = 0
 
 const jump = (id: string) => {
   const el = document.getElementById(id)
   if (el) el.scrollIntoView({ behavior: 'smooth' })
 }
 
-onMounted(() => {
-  // The footer <footer class="site-footer"> has no id; tag it on mount.
-  const footer = document.querySelector('.site-footer')
-  if (footer && !footer.id) footer.id = 'footer'
+const updateActiveSection = () => {
+  if (!scroller || trackedSections.length === 0) return
 
-  const scroller = document.querySelector('.snap-scroller') as HTMLElement | null
-  observer = new IntersectionObserver(
-    (entries) => {
-      // Pick the entry most intersecting.
-      let best: IntersectionObserverEntry | null = null
-      for (const e of entries) {
-        if (!best || e.intersectionRatio > best.intersectionRatio) best = e
-      }
-      if (best && best.isIntersecting && best.target.id) {
-        activeId.value = best.target.id
-      }
-    },
-    { root: scroller, threshold: [0.3, 0.55, 0.8] }
-  )
-  steps.forEach((s) => {
-    const el = document.getElementById(s.id)
-    if (el) observer!.observe(el)
+  const scrollCenter = scroller.scrollTop + scroller.clientHeight / 2
+  let bestId = activeId.value
+  let bestCenterDistance = Number.POSITIVE_INFINITY
+
+  trackedSections.forEach((section) => {
+    const sectionCenter = section.offsetTop + section.offsetHeight / 2
+    const centerDistance = Math.abs(sectionCenter - scrollCenter)
+
+    if (centerDistance < bestCenterDistance) {
+      bestId = section.id
+      bestCenterDistance = centerDistance
+    }
   })
+
+  activeId.value = bestId
+}
+
+const scheduleUpdate = () => {
+  if (frameId) cancelAnimationFrame(frameId)
+  frameId = window.requestAnimationFrame(() => {
+    updateActiveSection()
+    frameId = 0
+  })
+}
+
+onMounted(() => {
+  scroller = document.querySelector('.snap-scroller') as HTMLElement | null
+  trackedSections = steps
+    .map((step) => document.getElementById(step.id))
+    .filter((el): el is HTMLElement => Boolean(el))
+
+  scheduleUpdate()
+  scroller?.addEventListener('scroll', scheduleUpdate, { passive: true })
+  window.addEventListener('resize', scheduleUpdate)
 })
 
 onUnmounted(() => {
-  if (observer) observer.disconnect()
+  if (frameId) cancelAnimationFrame(frameId)
+  scroller?.removeEventListener('scroll', scheduleUpdate)
+  window.removeEventListener('resize', scheduleUpdate)
 })
 </script>
 

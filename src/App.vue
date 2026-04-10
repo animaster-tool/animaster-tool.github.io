@@ -3,9 +3,8 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import HeaderNav from './components/HeaderNav.vue'
 import HeroSection from './components/HeroSection.vue'
 import OverviewSection from './components/OverviewFrameSection.vue'
-import PaperSummarySection from './components/PaperSummarySection.vue'
-import GallerySection from './components/GallerySection.vue'
-import FooterSection from './components/FooterSection.vue'
+import PaperSummarySection from './components/PaperSummaryTabsSection.vue'
+import GallerySection from './components/GallerySynopsisSection.vue'
 import SnapTimeline from './components/SnapTimeline.vue'
 
 const DESIGN_WIDTH = 1600
@@ -106,7 +105,6 @@ onUnmounted(() => {
       <OverviewSection @scroll-to="scrollTo" />
       <PaperSummarySection />
       <GallerySection />
-      <FooterSection />
     </main>
   </div>
 </template>

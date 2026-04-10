@@ -23,7 +23,6 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
       <a href="#overview" @click.prevent="$emit('scrollTo', 'overview')">Overview</a>
       <a href="#demos" @click.prevent="$emit('scrollTo', 'demos')">Paper Summary</a>
       <a href="#method" @click.prevent="$emit('scrollTo', 'method')">Gallery</a>
-      <a href="#" class="nav-disabled">Code (Coming Soon)</a>
     </nav>
   </header>
 </template>
@@ -78,11 +77,6 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 
 .main-nav a:hover {
   color: #fff;
-}
-
-.main-nav .nav-disabled {
-  opacity: 0.4;
-  cursor: default;
 }
 
 @media (max-width: 768px) {
