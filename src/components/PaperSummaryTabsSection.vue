@@ -312,6 +312,8 @@ h2 {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--card-radius);
   padding: var(--size-32);
+  width: min(100%, calc(940px * var(--page-scale)));
+  margin: 0 auto;
 }
 
 .abstract-text {

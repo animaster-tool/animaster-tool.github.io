@@ -50,41 +50,43 @@ const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[
 <template>
   <section id="method" class="gallery-section">
     <div class="gallery-body">
-      <nav class="tabs-nav" aria-label="Gallery tabs">
-        <button
-          v-for="(item, index) in items"
-          :key="item.id"
-          :class="['tab-btn', { active: activeTab === index }]"
-          @click="activeTab = index"
-        >
-          {{ item.tab }}
-        </button>
-      </nav>
+      <div class="gallery-main">
+        <nav class="tabs-nav" aria-label="Gallery tabs">
+          <button
+            v-for="(item, index) in items"
+            :key="item.id"
+            :class="['tab-btn', { active: activeTab === index }]"
+            @click="activeTab = index"
+          >
+            {{ item.tab }}
+          </button>
+        </nav>
 
-      <div class="gallery-panel" :key="currentItem.id">
-        <div class="gallery-copy">
-          <p class="panel-kicker">Story Synopsis</p>
-          <h2>{{ currentItem.title }}</h2>
+        <div class="gallery-panel" :key="currentItem.id">
+          <div class="gallery-copy">
+            <p class="panel-kicker">Story Synopsis</p>
+            <h2>{{ currentItem.title }}</h2>
 
-          <div class="description-block">
-            <p v-for="paragraph in currentItem.description" :key="paragraph">
-              {{ paragraph }}
-            </p>
+            <div class="description-block">
+              <p v-for="paragraph in currentItem.description" :key="paragraph">
+                {{ paragraph }}
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="gallery-media">
-          <div class="video-shell">
-            <video
-              :key="currentItem.videoSrc"
-              class="gallery-video"
-              :src="currentItem.videoSrc"
-              controls
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            />
+          <div class="gallery-media">
+            <div class="video-shell">
+              <video
+                :key="currentItem.videoSrc"
+                class="gallery-video"
+                :src="currentItem.videoSrc"
+                controls
+                muted
+                loop
+                playsinline
+                preload="metadata"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -102,10 +104,17 @@ const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[
 }
 
 .gallery-body {
-  flex: 1 0 auto;
-  padding: var(--section-padding-y) var(--page-gutter) 0;
+  flex: 1 1 auto;
+  padding: 0 var(--page-gutter);
   max-width: var(--section-max-width);
   margin: 0 auto;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+}
+
+.gallery-main {
   width: 100%;
 }
 
@@ -121,8 +130,9 @@ const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.5);
-  padding: var(--size-10) var(--size-24);
-  font-size: var(--meta-size);
+  padding: var(--size-14) var(--size-32);
+  font-size: var(--body-size);
+  font-weight: 500;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.3s;
@@ -142,7 +152,7 @@ const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[
   display: grid;
   grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
   gap: var(--section-gap-lg);
-  align-items: stretch;
+  align-items: center;
   animation: fadeIn 0.4s ease;
 }
 
@@ -223,7 +233,8 @@ const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[
 
 @media (max-width: 768px) {
   .gallery-body {
-    padding: calc(56px * var(--page-scale)) 24px;
+    padding: calc(32px * var(--page-scale)) 24px 0;
+    align-items: flex-start;
   }
 
   .gallery-panel {

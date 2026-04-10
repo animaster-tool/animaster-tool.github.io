@@ -1,6 +1,9 @@
 <script setup lang="ts">
 // Minimal footer: only the bottom bar with GitHub link + copyright is kept.
 // The previous Resources / Navigation / Cite-This-Work blocks were removed.
+const backToTop = () => {
+  document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })
+}
 </script>
 
 <template>
@@ -8,7 +11,7 @@
     <div class="footer-container">
       <div class="footer-bottom">
         <div class="social-icons">
-          <a href="https://github.com/animaster-tool" target="_blank" title="GitHub">GitHub</a>
+          <button type="button" class="footer-link" @click="backToTop">Back to Top</button>
         </div>
         <p>&copy; 2026 AniMaster. All rights reserved.</p>
       </div>
@@ -48,14 +51,17 @@
   gap: 16px;
 }
 
-.social-icons a {
+.footer-link {
+  background: transparent;
+  border: none;
   color: rgba(255, 255, 255, 0.4);
-  text-decoration: none;
   font-size: var(--body-size-sm);
+  padding: 0;
+  cursor: pointer;
   transition: color 0.3s;
 }
 
-.social-icons a:hover {
+.footer-link:hover {
   color: #fff;
 }
 
