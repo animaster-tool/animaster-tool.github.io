@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const tabs = ['Framework', 'Translation', 'Interface', 'Evaluation']
+const tabs = ['Framework', 'Translation', 'Interface']
 const activeTab = ref(0)
 </script>
 
@@ -472,52 +472,12 @@ h2 {
   line-height: 1.55;
 }
 
-/* Evaluation */
-.eval-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.eval-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--card-radius);
-  padding: var(--size-22);
-}
-
-.eval-card h3 {
-  font-size: calc(17px * var(--page-scale));
-  color: #fff;
-  margin-bottom: 10px;
-}
-
-.eval-card > p {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: var(--body-size-sm);
-  line-height: 1.6;
-  margin-bottom: 14px;
-}
-
-.eval-highlight {
-  background: rgba(100, 181, 246, 0.06);
-  border-left: 3px solid rgba(100, 181, 246, 0.4);
-  padding: 10px 14px;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: var(--body-size-sm);
-  font-style: italic;
-  line-height: 1.55;
-  border-radius: 0 6px 6px 0;
-}
-
 @media (max-width: 768px) {
   .method-section {
     padding: calc(56px * var(--page-scale)) 24px;
   }
   .layer-cards,
-  .interface-features,
-  .eval-cards {
+  .interface-features {
     grid-template-columns: 1fr;
   }
   .translation-stages {

@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import HeaderNav from './components/HeaderNav.vue'
 import HeroSection from './components/HeroSection.vue'
-import OverviewSection from './components/OverviewSection.vue'
+import OverviewSection from './components/OverviewFrameSection.vue'
 import DemosSection from './components/DemosSection.vue'
 import MethodSection from './components/MethodSection.vue'
 import FooterSection from './components/FooterSection.vue'
@@ -53,7 +53,7 @@ const appScaleStyle = computed<Record<string, string>>(() => {
     '--size-42': `${42 * s}px`,
     '--size-56': `${56 * s}px`,
     '--hero-content-max-width': `${1400 * s}px`,
-    '--hero-title-max-width': `${700 * s}px`,
+    '--hero-title-max-width': `${1080 * s}px`,
     '--overview-gap': `${28 * s}px`,
     '--section-gap-lg': `${32 * s}px`,
     '--section-gap-md': `${24 * s}px`,
@@ -228,6 +228,10 @@ body {
      the slot instead of bleeding into the next section. */
   overflow-y: auto;
   box-sizing: border-box;
+}
+
+.snap-scroller > .overview-section {
+  overflow: hidden;
 }
 
 a {

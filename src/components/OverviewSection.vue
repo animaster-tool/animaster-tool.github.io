@@ -2,48 +2,51 @@
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 
 const isVisible = ref(false)
-const overviewBlockRef = ref<HTMLElement | null>(null)
+const overviewSectionRef = ref<HTMLElement | null>(null)
 const LIVE_DEMO_BASE_WIDTH = 1600
 const LIVE_DEMO_BASE_HEIGHT = 900
+const LIVE_DEMO_VISUAL_SCALE = 0.93
 
 const liveDemoStyle = ref({
-  width: '100%',
-  height: 'auto',
+  width: `${Math.round(LIVE_DEMO_BASE_WIDTH * LIVE_DEMO_VISUAL_SCALE)}px`,
+  height: `${Math.round(LIVE_DEMO_BASE_HEIGHT * LIVE_DEMO_VISUAL_SCALE)}px`,
 })
 const liveDemoFrameStyle = ref({
   width: `${LIVE_DEMO_BASE_WIDTH}px`,
   height: `${LIVE_DEMO_BASE_HEIGHT}px`,
-  transform: 'scale(1)',
+  transform: `scale(${LIVE_DEMO_VISUAL_SCALE})`,
 })
 
 let resizeObserver: ResizeObserver | null = null
+let intersectionObserver: IntersectionObserver | null = null
 
 const updateLiveDemoSize = () => {
-  const block = overviewBlockRef.value
-  if (!block) return
+  const section = overviewSectionRef.value
+  if (!section) return
 
-  const liveDemo = block.querySelector<HTMLElement>('.live-demo-wrap')
-  if (!liveDemo) return
+  const styles = getComputedStyle(section)
+  const paddingX =
+    (Number.parseFloat(styles.paddingLeft || '0') || 0) +
+    (Number.parseFloat(styles.paddingRight || '0') || 0)
+  const paddingY =
+    (Number.parseFloat(styles.paddingTop || '0') || 0) +
+    (Number.parseFloat(styles.paddingBottom || '0') || 0)
 
-  const styles = getComputedStyle(block)
-  const gap = Number.parseFloat(styles.rowGap || styles.gap || '0') || 0
-  const textItems = Array.from(block.children).filter((child) => child !== liveDemo)
-  const textHeight = textItems.reduce((sum, child) => sum + (child as HTMLElement).offsetHeight, 0)
-  const availableWidth = block.clientWidth
-  const availableHeight = Math.max(
-    block.clientHeight - textHeight - gap * Math.max(block.children.length - 1, 0),
-    0
-  )
+  const availableWidth = Math.max(section.clientWidth - paddingX, 0)
+  const availableHeight = Math.max(section.clientHeight - paddingY, 0)
 
   if (availableWidth <= 0 || availableHeight <= 0) return
 
   let width = availableWidth
-  let height = (width * 9) / 16
+  let height = (width * LIVE_DEMO_BASE_HEIGHT) / LIVE_DEMO_BASE_WIDTH
 
   if (height > availableHeight) {
     height = availableHeight
-    width = (height * 16) / 9
+    width = (height * LIVE_DEMO_BASE_WIDTH) / LIVE_DEMO_BASE_HEIGHT
   }
+
+  width *= LIVE_DEMO_VISUAL_SCALE
+  height *= LIVE_DEMO_VISUAL_SCALE
 
   const scale = Math.min(width / LIVE_DEMO_BASE_WIDTH, height / LIVE_DEMO_BASE_HEIGHT)
 
@@ -59,45 +62,42 @@ const updateLiveDemoSize = () => {
 }
 
 onMounted(() => {
-  const observer = new IntersectionObserver(
+  const section = overviewSectionRef.value
+  if (!section) return
+
+  intersectionObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           isVisible.value = true
-          observer.disconnect()
+          intersectionObserver?.disconnect()
         }
       })
     },
-    { threshold: 0.15 }
+    { threshold: 0.2 }
   )
-  const el = document.getElementById('overview')
-  if (el) observer.observe(el)
+  intersectionObserver.observe(section)
 
   nextTick(() => {
     updateLiveDemoSize()
     resizeObserver = new ResizeObserver(() => updateLiveDemoSize())
-    if (overviewBlockRef.value) resizeObserver.observe(overviewBlockRef.value)
+    resizeObserver.observe(section)
   })
 })
 
 onUnmounted(() => {
-  if (resizeObserver) resizeObserver.disconnect()
+  resizeObserver?.disconnect()
+  intersectionObserver?.disconnect()
 })
 </script>
 
 <template>
-  <section id="overview" class="overview-section">
-    <div class="spacer"></div>
-
-    <div ref="overviewBlockRef" :class="['overview-block', { visible: isVisible }]">
-      <h2>What is AniMaster?</h2>
-      <p class="tldr">
-        TL;DR: AniMaster is an LLM-powered authoring tool that helps everyday creators
-        progressively transform free-form story texts into polished cinematic animated videos,
-        by making professional narrative and cinematic knowledge explicit, editable, and
-        computationally actionable.
-      </p>
-
+  <section
+    id="overview"
+    ref="overviewSectionRef"
+    :class="['overview-section', { visible: isVisible }]"
+  >
+    <div class="overview-block">
       <!-- Live interactive demo: the real AniMaster frontend, prebaked with
            the 小红帽 workspace, running purely in the browser (no backend). -->
       <div class="live-demo-wrap" :style="liveDemoStyle">
@@ -114,14 +114,14 @@ onUnmounted(() => {
           loading="lazy"
           allow="clipboard-read; clipboard-write"
         />
-        <div class="live-demo-hint">
+        <!-- <div class="live-demo-hint">
           Drag the canvas, zoom with the wheel, click any Beat node to open the
           Inspector. All generation actions are disabled in this demo.
-        </div>
+        </div> -->
       </div>
     </div>
 
-    <div :class="['overview-block delay', { visible: isVisible }]">
+    <template v-if="false"><div :class="['overview-block delay', { visible: isVisible }]">
       <h2>The Challenge</h2>
       <p class="description">
         Video Generation Models have shown impressive capabilities, yet everyday creators
@@ -149,13 +149,13 @@ onUnmounted(() => {
           </p>
         </div>
       </div>
-    </div>
+    </div></template>
 
-    <div :class="['overview-block delay-2', { visible: isVisible }]">
+    <template v-if="false"><div :class="['overview-block delay-2', { visible: isVisible }]">
       <h2>Our Approach</h2>
 
       <div class="feature-cards">
-        <div class="feature-card">
+        <div class="feature-card"><!--
           <div class="feature-icon">📐</div>
           <h3>Three-Layer Design Framework</h3>
           <p>
@@ -163,7 +163,7 @@ onUnmounted(() => {
             three layers — <strong>Story Space</strong>, <strong>Script Space</strong>, and
             <strong>Video Space</strong> — as well as the translation rules between them.
           </p>
-        </div>
+        </div> -->
 
         <div class="feature-card">
           <div class="feature-icon">🎬</div>
@@ -178,6 +178,7 @@ onUnmounted(() => {
 
         <div class="feature-card">
           <div class="feature-icon">🖌️</div>
+          -->
           <h3>Canvas-Based Interactive Authoring</h3>
           <p>
             A semantic-zooming canvas lets creators navigate from global narrative overview
@@ -187,11 +188,11 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div class="about-actions">
+      <!-- <div class="about-actions">
         <button class="action-btn" @click="$emit('scrollTo', 'demos')">WALKTHROUGH ➜</button>
         <button class="action-btn secondary" @click="$emit('scrollTo', 'method')">METHOD ➜</button>
-      </div>
-    </div>
+      </div> -->
+    </div></template>
   </section>
 </template>
 
@@ -200,7 +201,7 @@ onUnmounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: var(--overview-top-space) var(--page-gutter) calc(56px * var(--page-scale));
+  padding: calc(var(--header-height) + var(--size-28)) var(--page-gutter) calc(56px * var(--page-scale));
   max-width: var(--section-max-width);
   margin: 0 auto;
 }
@@ -238,7 +239,7 @@ onUnmounted(() => {
 }
 
 h2 {
-  font-size: var(--section-title-size);
+  font-size: calc(var(--section-title-size) * 0.92);
   font-weight: 700;
   color: #fff;
   margin-bottom: var(--size-16);
@@ -246,7 +247,7 @@ h2 {
 
 .tldr {
   color: rgba(255, 255, 255, 0.75);
-  font-size: var(--body-size);
+  font-size: calc(var(--body-size) * 0.92);
   line-height: 1.75;
   margin-bottom: 0;
   width: 100%;
@@ -451,7 +452,7 @@ h2 {
 
 @media (max-width: 768px) {
   .overview-section {
-    padding: calc(var(--header-height) + 24px) 24px 32px;
+    padding: calc(var(--header-height) + var(--size-12)) 24px 32px;
   }
   .overview-section > .overview-block:first-of-type {
     gap: 18px;

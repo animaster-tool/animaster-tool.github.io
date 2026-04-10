@@ -93,14 +93,14 @@ onMounted(() => {
 .hero-text-content h2 {
   font-size: var(--hero-title-size);
   font-weight: 600;
-  line-height: 1.35;
-  max-width: 1300px;
   color: rgba(255, 255, 255, 0.92);
   margin-bottom: var(--size-32);
-  line-height: 1.6;
-  max-width: min(var(--hero-title-max-width), 78vw);
+  line-height: 1.48;
+  width: min(var(--hero-title-max-width), 86vw);
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
+  text-wrap: balance;
 }
 
 .link-buttons {
