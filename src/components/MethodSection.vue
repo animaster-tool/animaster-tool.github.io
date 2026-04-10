@@ -7,7 +7,7 @@ const activeTab = ref(0)
 
 <template>
   <section id="method" class="method-section">
-    <p class="section-label"><b>Method</b></p>
+    <p class="section-label"><b>Gallery</b></p>
 
     <nav class="tabs-nav">
       <button

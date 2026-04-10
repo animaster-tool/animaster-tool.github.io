@@ -21,8 +21,8 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
     </div>
     <nav class="main-nav">
       <a href="#overview" @click.prevent="$emit('scrollTo', 'overview')">Overview</a>
-      <a href="#demos" @click.prevent="$emit('scrollTo', 'demos')">Demos</a>
-      <a href="#method" @click.prevent="$emit('scrollTo', 'method')">Method</a>
+      <a href="#demos" @click.prevent="$emit('scrollTo', 'demos')">Paper Summary</a>
+      <a href="#method" @click.prevent="$emit('scrollTo', 'method')">Gallery</a>
       <a href="#" class="nav-disabled">Code (Coming Soon)</a>
     </nav>
   </header>

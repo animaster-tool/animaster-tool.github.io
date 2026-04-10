@@ -3,8 +3,8 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import HeaderNav from './components/HeaderNav.vue'
 import HeroSection from './components/HeroSection.vue'
 import OverviewSection from './components/OverviewFrameSection.vue'
-import DemosSection from './components/DemosSection.vue'
-import MethodSection from './components/MethodSection.vue'
+import PaperSummarySection from './components/PaperSummarySection.vue'
+import GallerySection from './components/GallerySection.vue'
 import FooterSection from './components/FooterSection.vue'
 import SnapTimeline from './components/SnapTimeline.vue'
 
@@ -104,8 +104,8 @@ onUnmounted(() => {
     <main class="snap-scroller">
       <HeroSection @scroll-to="scrollTo" />
       <OverviewSection @scroll-to="scrollTo" />
-      <DemosSection />
-      <MethodSection />
+      <PaperSummarySection />
+      <GallerySection />
       <FooterSection />
     </main>
   </div>

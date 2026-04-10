@@ -4,8 +4,8 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const steps = [
   { id: 'hero', label: 'Home' },
   { id: 'overview', label: 'Overview' },
-  { id: 'demos', label: 'Demos' },
-  { id: 'method', label: 'Method' },
+  { id: 'demos', label: 'Paper Summary' },
+  { id: 'method', label: 'Gallery' },
   { id: 'footer', label: 'Footer' },
 ]
 
