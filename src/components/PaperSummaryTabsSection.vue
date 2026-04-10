@@ -145,34 +145,13 @@ onMounted(async () => {
         different level of creative intent and production detail.
       </p>
 
-      <div class="framework-grid">
-        <div class="framework-card story">
-          <div class="card-kicker">Layer 1</div>
-          <h3>Story Space</h3>
-          <p class="card-question">What happens in the story?</p>
-          <p>
-            Represents raw narrative events with core dimensions such as actor, location, and time.
-          </p>
-        </div>
-
-        <div class="framework-card script">
-          <div class="card-kicker">Layer 2</div>
-          <h3>Script Space</h3>
-          <p class="card-question">How is the story told?</p>
-          <p>
-            Expands events into beat sequences that encode narrative pacing, focalization, and
-            audience-facing structure.
-          </p>
-        </div>
-
-        <div class="framework-card video">
-          <div class="card-kicker">Layer 3</div>
-          <h3>Video Space</h3>
-          <p class="card-question">How is it shown on screen?</p>
-          <p>
-            Converts beats into executable shots with concrete visual parameters such as framing,
-            movement, composition, lighting, and duration.
-          </p>
+      <div class="framework-figure">
+        <div class="framework-image-surface">
+          <img
+            class="framework-image"
+            src="/pictures/Framework.png"
+            alt="AniMaster three-layer framework diagram"
+          >
         </div>
       </div>
     </div>
@@ -287,12 +266,6 @@ h2 {
   max-width: 1120px;
 }
 
-.framework-grid {
-  display: grid;
-  gap: var(--section-gap-md);
-}
-
-.framework-card,
 .feature-copy,
 .feature-side-card {
   background: rgba(255, 255, 255, 0.04);
@@ -301,22 +274,37 @@ h2 {
   padding: var(--size-28);
 }
 
-.framework-card h3,
 .feature-copy h3 {
   font-size: calc(19px * var(--page-scale));
   color: #fff;
   margin-bottom: var(--size-10);
 }
 
-.framework-card p,
 .feature-copy p {
   color: rgba(255, 255, 255, 0.62);
   font-size: var(--body-size);
   line-height: 1.7;
 }
 
-.framework-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.framework-figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.framework-image-surface {
+  width: 100%;
+  background: #fff;
+  border-radius: calc(var(--card-radius) - 4px);
+  padding: var(--size-18);
+}
+
+.framework-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: calc(var(--card-radius) - 14px);
 }
 
 .abstract-card {
@@ -335,23 +323,6 @@ h2 {
 
 .abstract-text + .abstract-text {
   margin-top: var(--size-16);
-}
-
-.card-kicker {
-  display: inline-block;
-  margin-bottom: var(--size-12);
-  padding: 2px 10px;
-  border-radius: 999px;
-  font-size: var(--meta-size);
-  letter-spacing: 0.4px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.card-question {
-  margin-bottom: var(--size-12);
-  color: rgba(255, 255, 255, 0.42) !important;
-  font-style: italic;
 }
 
 .feature-tag {
@@ -440,24 +411,11 @@ h2 {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.framework-card.story {
-  border-top: 3px solid rgba(100, 181, 246, 0.6);
-}
-
-.framework-card.script {
-  border-top: 3px solid rgba(255, 167, 38, 0.6);
-}
-
-.framework-card.video {
-  border-top: 3px solid rgba(129, 199, 132, 0.6);
-}
-
 @media (max-width: 768px) {
   .paper-summary-section {
     padding: calc(56px * var(--page-scale)) 24px;
   }
 
-  .framework-grid,
   .feature-panel {
     grid-template-columns: 1fr;
   }
