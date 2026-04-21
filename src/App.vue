@@ -9,15 +9,71 @@ import SnapTimeline from './components/SnapTimeline.vue'
 
 const DESIGN_WIDTH = 1600
 const DESIGN_HEIGHT = 900
+const HOME_BG_BLUR = 14
+const INNER_PAGE_BG_BLUR = 24
+const HOME_BG_SCALE = 1.08
+const INNER_PAGE_BG_SCALE = 1.14
+const HOME_BG_BRIGHTNESS = 0.75
+const INNER_PAGE_BG_BRIGHTNESS = 0.54
+const HOME_OVERLAY_BOOST_OPACITY = 0
+const INNER_PAGE_OVERLAY_BOOST_OPACITY = 0.72
 
 const pageScale = ref(1)
+const activeBackgroundSection = ref('hero')
+let scroller: HTMLElement | null = null
+let trackedSections: HTMLElement[] = []
+let frameId = 0
 
 const updatePageScale = () => {
   pageScale.value = Math.min(window.innerWidth / DESIGN_WIDTH, window.innerHeight / DESIGN_HEIGHT)
 }
 
+const updateBackgroundSection = () => {
+  if (!scroller || trackedSections.length === 0) {
+    activeBackgroundSection.value = 'hero'
+    return
+  }
+
+  const scrollCenter = scroller.scrollTop + scroller.clientHeight / 2
+  let bestId = 'hero'
+  let bestCenterDistance = Number.POSITIVE_INFINITY
+
+  trackedSections.forEach((section) => {
+    const sectionCenter = section.offsetTop + section.offsetHeight / 2
+    const centerDistance = Math.abs(sectionCenter - scrollCenter)
+
+    if (centerDistance < bestCenterDistance) {
+      bestId = section.id
+      bestCenterDistance = centerDistance
+    }
+  })
+
+  activeBackgroundSection.value = bestId
+}
+
+const syncViewportEffects = () => {
+  updatePageScale()
+  updateBackgroundSection()
+}
+
+const scheduleViewportEffects = () => {
+  if (frameId) cancelAnimationFrame(frameId)
+
+  frameId = window.requestAnimationFrame(() => {
+    syncViewportEffects()
+    frameId = 0
+  })
+}
+
 const appScaleStyle = computed<Record<string, string>>(() => {
   const s = pageScale.value
+  const isHomeSection = activeBackgroundSection.value === 'hero'
+  const bgBlur = isHomeSection ? HOME_BG_BLUR : INNER_PAGE_BG_BLUR
+  const bgScale = isHomeSection ? HOME_BG_SCALE : INNER_PAGE_BG_SCALE
+  const bgBrightness = isHomeSection ? HOME_BG_BRIGHTNESS : INNER_PAGE_BG_BRIGHTNESS
+  const bgOverlayBoostOpacity = isHomeSection
+    ? HOME_OVERLAY_BOOST_OPACITY
+    : INNER_PAGE_OVERLAY_BOOST_OPACITY
 
   return {
     '--page-scale': `${s}`,
@@ -61,6 +117,10 @@ const appScaleStyle = computed<Record<string, string>>(() => {
     '--timeline-gap': `${18 * s}px`,
     '--timeline-dot-size': `${11 * s}px`,
     '--timeline-label-size': `${12.5 * s}px`,
+    '--bg-video-blur': `${bgBlur}px`,
+    '--bg-video-scale': `${bgScale}`,
+    '--bg-video-brightness': `${bgBrightness}`,
+    '--bg-overlay-boost-opacity': `${bgOverlayBoostOpacity}`,
   }
 })
 
@@ -72,12 +132,20 @@ const scrollTo = (id: string) => {
 }
 
 onMounted(() => {
-  updatePageScale()
-  window.addEventListener('resize', updatePageScale)
+  scroller = document.querySelector('.snap-scroller') as HTMLElement | null
+  trackedSections = ['hero', 'overview', 'demos', 'method']
+    .map((id) => document.getElementById(id))
+    .filter((section): section is HTMLElement => Boolean(section))
+
+  syncViewportEffects()
+  scroller?.addEventListener('scroll', scheduleViewportEffects, { passive: true })
+  window.addEventListener('resize', scheduleViewportEffects)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', updatePageScale)
+  if (frameId) cancelAnimationFrame(frameId)
+  scroller?.removeEventListener('scroll', scheduleViewportEffects)
+  window.removeEventListener('resize', scheduleViewportEffects)
 })
 </script>
 
@@ -157,10 +225,12 @@ body {
   height: 100dvh;
   object-fit: cover;
   z-index: -2;
-  filter: blur(14px) brightness(0.75);
-  transform: scale(1.08);
+  filter: blur(var(--bg-video-blur, 14px)) brightness(var(--bg-video-brightness, 0.75));
+  transform: scale(var(--bg-video-scale, 1.08));
+  transition: filter 0.55s ease, transform 0.55s ease;
   pointer-events: none;
   user-select: none;
+  will-change: filter, transform;
 }
 
 .bg-video-overlay {
@@ -176,6 +246,21 @@ body {
       rgba(10, 10, 10, 0.6) 60%,
       rgba(10, 10, 10, 0.78) 100%
     );
+}
+
+.bg-video-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(10, 10, 10, 0.26) 0%,
+      rgba(10, 10, 10, 0.48) 58%,
+      rgba(10, 10, 10, 0.72) 100%
+    );
+  opacity: var(--bg-overlay-boost-opacity, 0);
+  transition: opacity 0.55s ease;
 }
 
 /* ===== Scroll Snap Container =====
