@@ -4,9 +4,23 @@ import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 const isVisible = ref(false)
 const overviewSectionRef = ref<HTMLElement | null>(null)
 
-const LIVE_DEMO_BASE_WIDTH = 1600
-const LIVE_DEMO_BASE_HEIGHT = 900
-const LIVE_DEMO_VISUAL_SCALE = 0.93
+const LIVE_DEMO_BASE_WIDTH = 1920
+const LIVE_DEMO_BASE_HEIGHT = 1080
+const LIVE_DEMO_VISUAL_SCALE = 0.88
+
+// ─── Style overrides injected into the iframe (same-origin) ─────────────
+// Because the iframe's Vue component sets --arc-* CSS custom properties as
+// inline style on .story-arc-bar, a stylesheet rule with !important is the
+// only way to beat them without touching the AniMaster source. Tune the
+// pixel values below to adjust the top StoryArcBar height in the demo.
+const IFRAME_STYLE_OVERRIDES = `
+.story-arc-bar {
+  --arc-shot-height: 48px !important;
+  --arc-bar-max-height: 72px !important;
+  --arc-canvas-min-height: 56px !important;
+  --arc-bar-padding-y: 6px !important;
+}
+`
 
 const liveDemoStyle = ref({
   width: `${Math.round(LIVE_DEMO_BASE_WIDTH * LIVE_DEMO_VISUAL_SCALE)}px`,
@@ -62,6 +76,18 @@ const updateLiveDemoSize = () => {
   }
 }
 
+const onIframeLoad = (ev: Event) => {
+  const iframe = ev.target as HTMLIFrameElement
+  const doc = iframe.contentDocument
+  if (!doc) return // should not happen: same-origin iframe
+  // Remove any previous injection in case of reload/HMR
+  doc.getElementById('animaster-demo-style-overrides')?.remove()
+  const style = doc.createElement('style')
+  style.id = 'animaster-demo-style-overrides'
+  style.textContent = IFRAME_STYLE_OVERRIDES
+  doc.head.appendChild(style)
+}
+
 onMounted(() => {
   const section = overviewSectionRef.value
   if (!section) return
@@ -107,6 +133,7 @@ onUnmounted(() => {
           title="AniMaster interactive demo"
           loading="lazy"
           allow="clipboard-read; clipboard-write"
+          @load="onIframeLoad"
         />
       </div>
     </div>
@@ -153,8 +180,8 @@ onUnmounted(() => {
 .live-demo-frame {
   position: absolute;
   inset: 0 auto auto 0;
-  width: 1600px;
-  height: 900px;
+  width: 1920px;
+  height: 1080px;
   border: none;
   display: block;
   background: #0a0a0a;
