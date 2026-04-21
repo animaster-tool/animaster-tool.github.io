@@ -15,15 +15,39 @@
  */
 
 (function initDemoBoot() {
+  // NOTE: 'beat_first_frame_history' is intentionally NOT seeded. Its entries
+  // point to first-frame thumbnails from past generations that we deliberately
+  // did not bundle (see ../demo-assets/ — we only keep the "current" first
+  // frame per beat, ~45MB). Skipping the key means VueFlow's BeatCanvas node
+  // treats every beat as having no history and makes no network requests for
+  // those missing thumbnails.
   var WORKSPACE_KEYS = [
     'story_json',
     'story',
     'accordion_items',
-    'beat_first_frame_history',
     'theme',
   ];
-  var BOOT_FLAG = '__animaster_demo_boot_v1__';
+  var BOOT_FLAG = '__animaster_demo_boot_v2__';
   var WORKSPACE_URL = './demo-workspace.animaster';
+
+  // ─── URL rewrite ──────────────────────────────────────────────────────
+  //   The demo workspace was exported when assets still lived on the
+  //   project's backend (hdvis.tianeo.com). That host's TLS cert is for
+  //   aliyuncs.com and does not cover the tianeo name, so browsers refuse
+  //   every image/video fetch. We download the "current" assets once and
+  //   serve them statically from ./demo-assets/, then rewrite every hdvis
+  //   URL at seed-time so the app sees the local paths instead.
+  //
+  //   This must happen BEFORE the value is written to localStorage so the
+  //   app never sees the broken hostname — no race, no transient flashes.
+  function rewriteAssetUrls(value) {
+    if (typeof value !== 'string' || value.indexOf('hdvis.tianeo.com') === -1) {
+      return value;
+    }
+    // Match both http:// and https:// just in case; "/" at the end so that
+    // the capture group starts with the bucket path (e.g. CompImage/...).
+    return value.replace(/https?:\/\/hdvis\.tianeo\.com\//g, './demo-assets/');
+  }
 
   // ─── 1. Mock local backend ────────────────────────────────────────────
   var BACKEND_HOSTS = ['127.0.0.1:8000', 'localhost:8000'];
@@ -99,15 +123,23 @@
     if (xhr.status >= 200 && xhr.status < 300) {
       var data = JSON.parse(xhr.responseText);
       var seeded = 0;
+      var rewritten = 0;
       for (var i = 0; i < WORKSPACE_KEYS.length; i++) {
         var k = WORKSPACE_KEYS[i];
         if (data[k] !== undefined && data[k] !== null) {
-          localStorage.setItem(k, data[k]);
+          var before = data[k];
+          var after = rewriteAssetUrls(before);
+          if (after !== before) rewritten++;
+          localStorage.setItem(k, after);
           seeded++;
         }
       }
+      // Proactively clear the un-seeded history key in case it was seeded by
+      // a previous boot-flag version and is lingering in localStorage — its
+      // entries would point at 404s on the source server.
+      try { localStorage.removeItem('beat_first_frame_history'); } catch (e) {}
       sessionStorage.setItem(BOOT_FLAG, 'done');
-      console.log('[demo-boot] seeded', seeded, 'workspace keys into localStorage');
+      console.log('[demo-boot] seeded', seeded, 'workspace keys,', rewritten, 'rewritten to ./demo-assets/');
     } else {
       console.warn('[demo-boot] workspace file fetch returned', xhr.status);
     }
