@@ -16,6 +16,9 @@ const LIVE_DEMO_VISUAL_SCALE = 0.88
 const IFRAME_STYLE_OVERRIDES = `
 .story-arc-bar {
   --arc-shot-height: 48px !important;
+  /* Derive width from height to preserve the 16:9 thumbnail aspect ratio.
+     Change --arc-shot-height above and width follows automatically. */
+  --arc-shot-width: calc(var(--arc-shot-height) * 16 / 9) !important;
   --arc-bar-max-height: 72px !important;
   --arc-canvas-min-height: 56px !important;
   --arc-bar-padding-y: 6px !important;
