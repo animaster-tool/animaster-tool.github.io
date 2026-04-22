@@ -27,7 +27,7 @@
     'accordion_items',
     'theme',
   ];
-  var BOOT_FLAG = '__animaster_demo_boot_v2__';
+  var BOOT_FLAG = '__animaster_demo_boot_v3__';
   var WORKSPACE_URL = './demo-workspace.animaster';
 
   // ─── URL rewrite ──────────────────────────────────────────────────────
@@ -40,13 +40,31 @@
   //
   //   This must happen BEFORE the value is written to localStorage so the
   //   app never sees the broken hostname — no race, no transient flashes.
+  //
+  //   Two kinds of asset references need to be rewritten:
+  //     (a) Full hdvis URLs embedded inside beat frames / video fields:
+  //         "https://hdvis.tianeo.com/CompImage/S1-E1-B1.png"
+  //     (b) Bare, site-relative paths in character-card / location-card
+  //         nodes written by the AniMaster backend:
+  //         "characterImageURL":"/RefImage/Mother_ae1872.png"
+  //         "locationImageURL":"/RefImage/...garden_dc1354.png"
+  //         These would otherwise resolve against the iframe host
+  //         (animaster-tool.github.io/RefImage/...) and 404.
+  //   We match the quoted form "/RefImage/ so that we only rewrite JSON
+  //   string values and never accidentally rewrite e.g. a markdown path or
+  //   URL fragment.
   function rewriteAssetUrls(value) {
-    if (typeof value !== 'string' || value.indexOf('hdvis.tianeo.com') === -1) {
-      return value;
+    if (typeof value !== 'string') return value;
+    var out = value;
+    if (out.indexOf('hdvis.tianeo.com') !== -1) {
+      // Match both http:// and https:// just in case; trailing "/" so the
+      // capture point is the bucket path (e.g. CompImage/...).
+      out = out.replace(/https?:\/\/hdvis\.tianeo\.com\//g, './demo-assets/');
     }
-    // Match both http:// and https:// just in case; "/" at the end so that
-    // the capture group starts with the bucket path (e.g. CompImage/...).
-    return value.replace(/https?:\/\/hdvis\.tianeo\.com\//g, './demo-assets/');
+    if (out.indexOf('"/RefImage/') !== -1) {
+      out = out.replace(/"\/RefImage\//g, '"./demo-assets/RefImage/');
+    }
+    return out;
   }
 
   // ─── 1. Mock local backend ────────────────────────────────────────────
