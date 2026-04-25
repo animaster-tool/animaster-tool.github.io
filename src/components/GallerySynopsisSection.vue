@@ -2,12 +2,18 @@
 import { computed, ref } from 'vue'
 import FooterSection from './FooterSection.vue'
 
+type CaseStudy = {
+  quote: string
+  attribution: string
+}
+
 type GalleryItem = {
   id: string
   tab: string
   title: string
   description: string[]
   videoSrc: string
+  caseStudy?: CaseStudy
 }
 
 const items: GalleryItem[] = [
@@ -30,6 +36,10 @@ const items: GalleryItem[] = [
       'With the help of magic she is transformed for one evening, attends the royal ball, and leaves behind a single glass slipper. The story combines emotional contrast, transformation, and a final recognition that restores her place and dignity.',
     ],
     videoSrc: '/videos/Cinderella.mp4',
+    caseStudy: {
+      quote: 'I never imagined this shot could be done this way.',
+      attribution: 'P17 · college student, no filmmaking experience',
+    },
   },
   {
     id: 'the-little-mermaid',
@@ -40,6 +50,11 @@ const items: GalleryItem[] = [
       'In pursuit of love and another life, she gives up her voice for the chance to walk on land. The story moves through wonder, sacrifice, and longing, balancing dreamlike atmosphere with the emotional cost of transformation.',
     ],
     videoSrc: '/videos/SeaDaughter.mp4',
+    caseStudy: {
+      quote:
+        'The generated templates are great suggestions, but when it comes to the actual creation, I still rely on my own style.',
+      attribution: 'P18 · hobbyist, 2 years of animation experience',
+    },
   },
 ]
 
@@ -64,13 +79,26 @@ const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[
 
         <div class="gallery-panel" :key="currentItem.id">
           <div class="gallery-copy">
-            <p class="panel-kicker">Story Synopsis</p>
+            <div class="copy-header">
+              <p class="panel-kicker">Story Synopsis</p>
+              <span
+                v-if="currentItem.caseStudy"
+                class="panel-kicker case-study-kicker"
+              >Case Study</span>
+            </div>
             <h2>{{ currentItem.title }}</h2>
 
             <div class="description-block">
               <p v-for="paragraph in currentItem.description" :key="paragraph">
                 {{ paragraph }}
               </p>
+            </div>
+
+            <div v-if="currentItem.caseStudy" class="case-study-block">
+              <blockquote class="case-study-insight">
+                <span class="case-study-quote">&ldquo;{{ currentItem.caseStudy.quote }}&rdquo;</span>
+                <cite class="case-study-attribution">— {{ currentItem.caseStudy.attribution }}</cite>
+              </blockquote>
             </div>
           </div>
 
@@ -190,6 +218,19 @@ const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[
   color: rgba(255, 255, 255, 0.58);
 }
 
+/* Top row of the copy block: "Story Synopsis" on the left, optional
+   "Case Study" tag pinned to the right edge of the story-text column. */
+.copy-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-12);
+}
+
+.copy-header .panel-kicker {
+  margin-bottom: 0;
+}
+
 .gallery-copy h2 {
   font-size: var(--section-title-size);
   font-weight: 700;
@@ -206,6 +247,43 @@ const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[
   color: rgba(255, 255, 255, 0.58);
   font-size: var(--body-size);
   line-height: 1.8;
+}
+
+.case-study-block {
+  margin-top: var(--size-20);
+  padding-top: var(--size-20);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  gap: var(--size-12);
+}
+
+.case-study-kicker {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.8);
+  justify-self: start;
+}
+
+.case-study-insight {
+  margin: 0;
+  padding-left: var(--size-14);
+  border-left: 2px solid rgba(255, 255, 255, 0.18);
+  display: grid;
+  gap: var(--size-8);
+}
+
+.case-study-quote {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: var(--body-size-sm);
+  line-height: 1.65;
+  font-style: italic;
+}
+
+.case-study-attribution {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: var(--meta-size);
+  font-style: normal;
+  text-align: right;
+  align-self: end;
 }
 
 .gallery-media {
