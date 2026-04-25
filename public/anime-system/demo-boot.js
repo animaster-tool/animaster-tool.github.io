@@ -27,7 +27,7 @@
     'accordion_items',
     'theme',
   ];
-  var BOOT_FLAG = '__animaster_demo_boot_v3__';
+  var BOOT_FLAG = '__animaster_demo_boot_v4__';
   var WORKSPACE_URL = './demo-workspace.animaster';
 
   // ─── URL rewrite ──────────────────────────────────────────────────────
@@ -133,7 +133,8 @@
   if (sessionStorage.getItem(BOOT_FLAG) === 'done') return;
 
   // Use a sync XHR to guarantee localStorage is seeded BEFORE the Vue
-  // bundle starts executing. A 750KB local file is fine for sync XHR.
+  // bundle starts executing. The workspace file is ~150KB (compacted JSON),
+  // which is well within the safe range for a blocking fetch.
   try {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', WORKSPACE_URL, /* async */ false);
@@ -163,5 +164,72 @@
     }
   } catch (e) {
     console.warn('[demo-boot] seed failed:', e);
+  }
+
+  // ─── 3. Demo-only UI patches ──────────────────────────────────────────
+  //   The project-page iframe should present AniMaster as a read-only demo.
+  //   We strip workspace-management controls the user cannot meaningfully
+  //   use (Save / Load / Reset / Settings / Output) and collapse the
+  //   Script Reader side panel so the canvas gets full width on first view.
+  //
+  //   None of this touches the AniMaster source — everything here is a
+  //   pure runtime patch that reaches into the bundled app's DOM.
+  try {
+    // 3a. Hide right-side header buttons via CSS.
+    //     We target by the buttons' title attribute, which is a stable
+    //     contract in the source template. Help button and theme switch
+    //     are deliberately preserved.
+    var style = document.createElement('style');
+    style.setAttribute('data-demo-ui-patch', '1');
+    style.textContent = [
+      '.header .header-action-btn[title="Save Workspace"],',
+      '.header .header-action-btn[title="Load Workspace"],',
+      '.header .header-action-btn[title="Reset Workspace"],',
+      '.header .header-action-btn[title="Settings"],',
+      '.header .header-action-btn[title="Output Video"],',
+      '.header .header-separator { display: none !important; }',
+    ].join('\n');
+    (document.head || document.documentElement).appendChild(style);
+
+    // 3b. Collapse the Script Reader on first appearance.
+    //     StoryLineView.vue (line ~4420) unconditionally flips
+    //     `showScriptView` to true in a nextTick after storyPhases load.
+    //     We observe the DOM for the resulting <.script-view-panel>,
+    //     click its close button (same handler the user would hit), and
+    //     then disconnect the observer so the user can still open the
+    //     Script Reader manually afterwards.
+    //
+    //     Clicking the real close button — rather than CSS-hiding the
+    //     panel — matters because the parent's `onCloseScriptReader`
+    //     also zeroes `scriptPanelWidth`, which is what the StoryArcBar
+    //     reads to recompute its `left` offset. Without this, the arc
+    //     bar stays shifted right of the (invisible) reader column.
+    var collapsed = false;
+    var observer = new MutationObserver(function () {
+      if (collapsed) return;
+      var panel = document.querySelector('.script-view-panel');
+      if (!panel) return;
+      var closeBtn = panel.querySelector('.script-view-header .controls .el-button');
+      if (!closeBtn) return;
+      collapsed = true;
+      // Small delay gives Vue's Transition a chance to attach so the
+      // emitted close event is handled cleanly. 0ms is usually enough
+      // but 30ms keeps it robust on slower machines.
+      setTimeout(function () {
+        try { closeBtn.click(); } catch (err) { /* noop */ }
+        observer.disconnect();
+      }, 30);
+    });
+    // documentElement is always available even before <body> parses.
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+
+    // Safety net: stop watching after 30 seconds to avoid leaking
+    // a long-lived observer if the panel never appears (e.g. empty
+    // workspace, upload flow).
+    setTimeout(function () {
+      if (!collapsed) observer.disconnect();
+    }, 30000);
+  } catch (e) {
+    console.warn('[demo-boot] UI patch failed:', e);
   }
 })();
