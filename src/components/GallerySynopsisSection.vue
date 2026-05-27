@@ -7,12 +7,18 @@ type CaseStudy = {
   attribution: string
 }
 
+type VideoClip = {
+  label: string
+  src: string
+}
+
 type GalleryItem = {
   id: string
   tab: string
   title: string
   description: string[]
   videoSrc: string
+  clips?: VideoClip[]
   caseStudy?: CaseStudy
 }
 
@@ -25,7 +31,11 @@ const items: GalleryItem[] = [
       'Little Red Riding Hood tells the story of a young girl who travels through the forest to visit her grandmother, carrying food and trusting too easily in the stranger she meets along the way.',
       'On her journey she encounters a wolf, who deceives her, reaches the grandmother\'s house first, and disguises himself in order to trap her. The story unfolds through suspense, disguise, and the eventual discovery of the danger hidden beneath a familiar face.',
     ],
-    videoSrc: '/videos/LittleRedRidingHood.mp4',
+    videoSrc: '/videos/LittleRedRidingHood1.mp4',
+    clips: [
+      { label: 'clip1', src: '/videos/LittleRedRidingHood1.mp4' },
+      { label: 'clip2', src: '/videos/LittleRedRidingHood2.mp4' },
+    ],
   },
   {
     id: 'cinderella',
@@ -59,7 +69,17 @@ const items: GalleryItem[] = [
 ]
 
 const activeTab = ref(0)
+const activeClip = ref(0)
 const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[0]!)
+const currentClips = computed<VideoClip[]>(() => currentItem.value.clips ?? [])
+const currentVideoSrc = computed<string>(() => {
+  return currentClips.value[activeClip.value]?.src ?? currentItem.value.videoSrc
+})
+
+function handleTabClick(index: number) {
+  activeTab.value = index
+  activeClip.value = 0
+}
 </script>
 
 <template>
@@ -71,7 +91,7 @@ const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[
             v-for="(item, index) in items"
             :key="item.id"
             :class="['tab-btn', { active: activeTab === index }]"
-            @click="activeTab = index"
+            @click="handleTabClick(index)"
           >
             {{ item.tab }}
           </button>
@@ -103,11 +123,22 @@ const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[
           </div>
 
           <div class="gallery-media">
+            <div v-if="currentClips.length > 1" class="clip-tabs">
+              <button
+                v-for="(clip, index) in currentClips"
+                :key="clip.src"
+                :class="['clip-btn', { active: activeClip === index }]"
+                @click="activeClip = index"
+              >
+                {{ clip.label }}
+              </button>
+            </div>
+
             <div class="video-shell">
               <video
-                :key="currentItem.videoSrc"
+                :key="currentVideoSrc"
                 class="gallery-video"
-                :src="currentItem.videoSrc"
+                :src="currentVideoSrc"
                 controls
                 muted
                 loop
@@ -288,7 +319,34 @@ const currentItem = computed<GalleryItem>(() => items[activeTab.value] ?? items[
 
 .gallery-media {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.clip-tabs {
+  display: flex;
+  gap: var(--size-10);
+  margin-bottom: var(--size-12);
+}
+
+.clip-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0 0 8px;
+  font-size: var(--meta-size);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s;
+}
+
+.clip-btn:hover {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.clip-btn.active {
+  color: #fff;
+  border-bottom-color: #fff;
 }
 
 .video-shell {
